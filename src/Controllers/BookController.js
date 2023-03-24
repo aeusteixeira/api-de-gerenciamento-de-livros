@@ -1,3 +1,4 @@
+import NotFoundError from '../errors/NotFoundError.js';
 import BookModel from '../models/Book.js';
 
 class bookController {
@@ -27,7 +28,7 @@ class bookController {
 			if (author) {
 				return response.status(200).json(author);
 			} else {
-				return response.status(404).json({ message: 'livo não encontrado.' });
+				next(new NotFoundError('Livo não encontrado'));
 			}
 		} catch (error) {
 			next(error);
@@ -63,7 +64,6 @@ class bookController {
 			next(error);
 		}
 	}
-    
 }
 
 export default new bookController();
