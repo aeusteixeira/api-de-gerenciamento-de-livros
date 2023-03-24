@@ -2,26 +2,26 @@ import BookModel from '../models/Book.js';
 
 class bookController {
 
-	async store(request, response) {
+	async store(request, response, next) {
 		try {
 			const author = await BookModel.create(request.body);
 			return response.status(201).json(author);
 		} catch (error) {
-			return response.status(400).json({ message: 'Falha ao criar livo' });
+			next(error);
 		}
 	}
 
-	async index(request, response) {
+	async index(request, response, next) {
 		try {
 			const authors = await BookModel.find().populate('author').exec();
 			return response.status(200).json(authors);
 		} catch (error) {
-			return response.status(500).json({ message: 'Erro ao buscar livros' });
+			next(error);
 		}
 	}
       
 
-	async show(request, response) {
+	async show(request, response, next) {
 		try {
 			const author = await BookModel.findById(request.params.id).populate('author', 'name').exec();
 			if (author) {
@@ -30,38 +30,37 @@ class bookController {
 				return response.status(404).json({ message: 'livo não encontrado.' });
 			}
 		} catch (error) {
-			return response.status(500).json({ message: 'Ocorreu um erro ao buscar o livo.' });
+			next(error);
 		}
 	}
       
 
-	async update(request, response) {
+	async update(request, response, next) {
 		try {
 			const author = await BookModel.findByIdAndUpdate(request.params.id, request.body);
 			response.status(200).json({ message: 'livo atualizado com sucesso', author });
 		} catch (error) {
-			response.status(404).json({ message: 'Falha ao atualizar livo' });
+			next(error);
 		}
 	}
       
 
-	async destroy(request, response){
+	async destroy(request, response, next){
 		try {
 			await BookModel.findByIdAndDelete(request.params.id);
 			return response.status(200).json({message: 'livo excluído com sucesso!'});
 		} catch (error) {
-			return response.status(404).json({message: 'Falha ao excluir o livo.'});
+			next(error);
 		}
 	}
 
-	async getAuthorsByCompanyPlublisher(request, response) {
+	async getAuthorsByCompanyPlublisher(request, response, next) {
 		const editora = request.query.editora;
-
 		try {
 			const authors = await BookModel.find({publish_company: editora}).populate('author').exec();
 			return response.status(200).json(authors);
 		} catch (error) {
-			return response.status(500).json({ message: 'Erro ao buscar livros' });
+			next(error);
 		}
 	}
     

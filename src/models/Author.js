@@ -5,7 +5,10 @@ const ObjectId = Schema.ObjectId;
 
 const AuthorSchema = new Schema({
 	id: ObjectId,
-	name: String,
+	name: {
+		type: String,
+		required: [true, 'O nome do autor é obrigatório.'],
+	}
 },
 {
 	versionKey: false
