@@ -1,9 +1,9 @@
-import connect from "./database.js" 
+import connect from './database.js'; 
 
 class Loaders {
-    start(){
-        connect();
-    }
+	start(){
+		connect();
+	}
 }
 
 export default new Loaders();

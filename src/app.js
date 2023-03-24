@@ -1,6 +1,6 @@
-import express, { json } from "express";
-import Loaders from './config/index.js' 
-import routes from "./routes/index.js";
+import express from 'express';
+import Loaders from './config/index.js'; 
+import routes from './routes/index.js';
 
 const app = express();
 Loaders.start();

@@ -1,14 +1,14 @@
-import { Router, response } from "express";
-import BookController from "./Controllers/BookController.js";
-import AuthorController from "./Controllers/AuthorController.js";
+import { Router } from 'express';
+import BookController from './Controllers/BookController.js';
+import AuthorController from './Controllers/AuthorController.js';
 
 const router = Router();
 
-router.get("/helth", (request, response) => {
-    return response.status(200).json({
-        message: "Server is on"
-    });
-})
+router.get('/helth', (request, response) => {
+	return response.status(200).json({
+		message: 'Server is on'
+	});
+});
 // Books routes
 
 router.get('/books', BookController.index);
