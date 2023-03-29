@@ -55,15 +55,22 @@ class bookController {
 		}
 	}
 
-	async getAuthorsByCompanyPlublisher(request, response, next) {
-		const editora = request.query.editora;
+	async getBookByFilter(request, response, next) {
 		try {
-			const authors = await BookModel.find({publish_company: editora}).populate('author').exec();
-			return response.status(200).json(authors);
+			const { editora, titulo } = request.query;
+
+			const search = {};
+
+			if(editora) search.publish_company = editora;
+			if(titulo) search.title = { $regex: titulo, $options: 'i'};
+
+			const data = await BookModel.find(search);
+			response.status(200).json(data);
 		} catch (error) {
 			next(error);
 		}
 	}
+
 }
 
 export default new bookController();

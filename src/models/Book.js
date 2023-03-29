@@ -18,8 +18,20 @@ const BookSchema = new Schema({
 	publish_company: {
 		type: String,
 		required: [true, 'A editora do livro é obrigatória.'],
+		enum: {
+			values: [
+				'Rocco',
+				'Brasil Literatura',
+			],
+			message: ' A editora {VALUE} não é válida.'
+		}
 	},
-	number_pages: Number
+	number_pages: {
+		type: Number,
+		min: [1, 'O livro deve ter pelo menos 1 página.'],
+		max: [5000, 'O livro deve ter no máximo 1000 páginas.'],
+		required: [true, 'O número de páginas do livro é obrigatório.'],
+	}
 });
 
 const BookModel = mongoose.model('books', BookSchema);
