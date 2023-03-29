@@ -58,21 +58,20 @@ class bookController {
 
 	async getBookByFilter(request, response, next) {
 		try {
-			const { editora, titulo, nomeAutor } = request.query;
-
+			const { editora, titulo, autor } = request.query;
 			const search = {};
 
 			if(editora) search.publish_company = editora;
 			if(titulo) search.title = { $regex: titulo, $options: 'i'};
 
-			if(nomeAutor){
-				const author = AuthorModel.findOne({ name: nomeAutor });
-				const authorId = author._id;
-				search.author = authorId;
+			if(autor){
+				const author = await AuthorModel.findOne({ name: autor });
+				search.author = author._id;
 			}
 
 			const data = await BookModel.find(search);
 			response.status(200).json(data);
+
 		} catch (error) {
 			next(error);
 		}
