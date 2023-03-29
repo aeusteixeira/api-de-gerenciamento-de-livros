@@ -1,5 +1,6 @@
 import NotFoundError from '../errors/NotFoundError.js';
 import BookModel from '../models/Book.js';
+import AuthorModel from '../models/Author.js';
 
 class bookController {
 
@@ -57,12 +58,18 @@ class bookController {
 
 	async getBookByFilter(request, response, next) {
 		try {
-			const { editora, titulo } = request.query;
+			const { editora, titulo, nomeAutor } = request.query;
 
 			const search = {};
 
 			if(editora) search.publish_company = editora;
 			if(titulo) search.title = { $regex: titulo, $options: 'i'};
+
+			if(nomeAutor){
+				const author = AuthorModel.findOne({ name: nomeAutor });
+				const authorId = author._id;
+				search.author = authorId;
+			}
 
 			const data = await BookModel.find(search);
 			response.status(200).json(data);
