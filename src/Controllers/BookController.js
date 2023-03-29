@@ -59,7 +59,7 @@ class bookController {
 	async getBookByFilter(request, response, next) {
 		try {
 			const search = await this.handleFilter(request.query);
-			console.log(search);
+			const data = BookModel.find(search);
 		} catch (error) {
 			next(error);
 		}
