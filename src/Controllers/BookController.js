@@ -58,23 +58,27 @@ class bookController {
 
 	async getBookByFilter(request, response, next) {
 		try {
-			const { editora, titulo, autor } = request.query;
-			const search = {};
-
-			if(editora) search.publish_company = editora;
-			if(titulo) search.title = { $regex: titulo, $options: 'i'};
-
-			if(autor){
-				const author = await AuthorModel.findOne({ name: autor });
-				search.author = author._id;
-			}
-
-			const data = await BookModel.find(search);
-			response.status(200).json(data);
-
+			const search = await this.handleFilter(request.query);
+			console.log(search);
 		} catch (error) {
 			next(error);
 		}
+	}
+
+	async handleFilter(params) {
+		const { editora, titulo, autor, min_paginas, max_paginas } = params;
+		let search = {};
+
+		if(editora) search.publish_company = editora;
+		if(titulo) search.title = { $regex: titulo, $options: 'i'};
+		if(min_paginas || max_paginas) search.pages = {};
+
+		if(autor){
+			const author = await AuthorModel.findOne({ name: autor });
+			search.author = author._id;
+		}
+
+		return search;
 	}
 
 }
