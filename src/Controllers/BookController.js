@@ -15,8 +15,29 @@ class bookController {
 
 	async index(request, response, next) {
 		try {
-			const authors = await BookModel.find().populate('author').exec();
-			return response.status(200).json(authors);
+			let { limite = 5,
+				pagina = 1,
+				order_by = '_id',
+				order = -1,
+			} = request.query;
+
+			limite = parseInt(limite);
+			pagina = parseInt(pagina);
+			order = parseInt(order);
+
+
+			if(limite > 0 && pagina > 0){
+				const authors = await BookModel.find()
+					.sort({ [order_by]: order })
+					.skip((parseInt(pagina) - 1) * parseInt(limite))
+					.limit(parseInt(limite))
+					.populate('author')
+					.exec();
+
+				return response.status(200).json(authors);
+			}else{
+				next(new NotFoundError('Um ou mais parâmetros de paginação estão incorretos'));
+			}
 		} catch (error) {
 			next(error);
 		}
