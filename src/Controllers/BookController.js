@@ -58,27 +58,43 @@ class bookController {
 
 	async getBookByFilter(request, response, next) {
 		try {
-			const search = await this.handleFilter(request.query);
-			const data = BookModel.find(search);
+
+			// Tratar os dados de entrada
+			const { editora, titulo, autor, max_paginas, min_paginas } = request.query;
+
+			let search = {};
+
+			if(editora) search.publish_company = editora;
+			if(titulo) search.title = { $regex: titulo, $options: 'i'};
+
+			if (min_paginas || max_paginas) search.num_pages = {};
+
+			// gte = Greater Than or Equal = Maior ou igual que
+			if (min_paginas) search.num_pages.$gte = min_paginas;
+			// lte = Less Than or Equal = Menor ou igual que
+			if (max_paginas) search.num_pages.$lte = max_paginas;
+
+			if(autor){
+				const author = await AuthorModel.findOne({ name: autor });
+
+				if(author !== null){
+					search.author = author._id;
+				}else{
+					search = null;
+				}
+			}
+
+			if(search !== null){
+				// Buscar os dados no banco
+				const data = await BookModel.find(search)
+					.populate('author');
+				response.status(200).send(data);
+			}else{
+				response.status(200).send([]);
+			}
 		} catch (error) {
 			next(error);
 		}
-	}
-
-	async handleFilter(params) {
-		const { editora, titulo, autor, min_paginas, max_paginas } = params;
-		let search = {};
-
-		if(editora) search.publish_company = editora;
-		if(titulo) search.title = { $regex: titulo, $options: 'i'};
-		if(min_paginas || max_paginas) search.pages = {};
-
-		if(autor){
-			const author = await AuthorModel.findOne({ name: autor });
-			search.author = author._id;
-		}
-
-		return search;
 	}
 
 }
